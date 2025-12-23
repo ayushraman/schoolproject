@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Dalimms ChatBot - AI Knowledge Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Animated Background -->
+        <div class="bg-animation">
+            <div class="grid-lines"></div>
+            <div class="particles" id="particles"></div>
+            <div class="scan-line"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Coat_of_Arms_of_the_University_of_Cambridge.svg" alt="Cambridge Logo" class="cambridge-logo">
+                </div>
+                <div class="logo-text">
+                    <h1>Dalimms<span class="accent">ChatBot</span></h1>
+                </div>
+            </div>
+            <div class="status-indicators">
+                <div class="status-item online">
+                    <span class="pulse"></span>
+                    <span class="label">SYSTEM ONLINE</span>
+                </div>
+                <div class="status-item">
+                    <span class="data-stream" id="dataStream">00:00:00</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">API:</span>
+                    <span class="value" id="apiStatus">CONNECTED</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Left Panel - Stats -->
+            <aside class="left-panel">
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <span class="icon">◆</span> SYSTEM METRICS
+                    </h3>
+                    <div class="metric-item">
+                        <span class="metric-label">QUERIES PROCESSED</span>
+                        <span class="metric-value" id="queriesCount">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">WORDS ANALYZED</span>
+                        <span class="metric-value" id="wordsCount">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">RESPONSE TIME</span>
+                        <span class="metric-value" id="responseTime">0ms</span>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <span class="icon">◆</span> RECENT TOPICS
+                    </h3>
+                    <ul class="topic-list" id="topicList">
+                        <li class="topic-item empty">No queries yet...</li>
+                    </ul>
+                </div>
+
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <span class="icon">◆</span> NEURAL ACTIVITY
+                    </h3>
+                    <div class="activity-graph">
+                        <div class="graph-bars">
+                            <div class="graph-bar" style="--delay: 0s;"></div>
+                            <div class="graph-bar" style="--delay: 0.1s;"></div>
+                            <div class="graph-bar" style="--delay: 0.2s;"></div>
+                            <div class="graph-bar" style="--delay: 0.3s;"></div>
+                            <div class="graph-bar" style="--delay: 0.15s;"></div>
+                            <div class="graph-bar" style="--delay: 0.25s;"></div>
+                            <div class="graph-bar" style="--delay: 0.05s;"></div>
+                            <div class="graph-bar" style="--delay: 0.35s;"></div>
+                            <div class="graph-bar" style="--delay: 0.12s;"></div>
+                            <div class="graph-bar" style="--delay: 0.22s;"></div>
+                        </div>
+                        <div class="graph-line">
+                            <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="var(--holo-primary)"/>
+                                        <stop offset="50%" stop-color="var(--holo-accent)"/>
+                                        <stop offset="100%" stop-color="var(--holo-secondary)"/>
+                                    </linearGradient>
+                                    <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="rgba(0, 212, 255, 0.3)"/>
+                                        <stop offset="100%" stop-color="rgba(0, 212, 255, 0)"/>
+                                    </linearGradient>
+                                </defs>
+                                <path class="graph-area" d="M0,50 Q20,35 40,40 T80,25 T120,35 T160,20 T200,30 L200,60 L0,60 Z" fill="url(#areaGradient)"/>
+                                <path class="graph-path" d="M0,50 Q20,35 40,40 T80,25 T120,35 T160,20 T200,30" fill="none" stroke="url(#lineGradient)" stroke-width="2"/>
+                                <circle class="graph-dot" cx="40" cy="40" r="3"/>
+                                <circle class="graph-dot" cx="80" cy="25" r="3"/>
+                                <circle class="graph-dot" cx="120" cy="35" r="3"/>
+                                <circle class="graph-dot" cx="160" cy="20" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="graph-glow"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center - Chat Area -->
+            <section class="chat-section">
+                <!-- Mascot Container -->
+                <div class="mascot-container">
+                    <!-- Voice Controls - Separate Row -->
+                    <div class="voice-controls">
+                        <button class="voice-btn active" id="voiceToggle" title="Toggle Voice Narration">
+                            <span class="voice-icon">🔊</span>
+                            <span class="voice-label">ON</span>
+                        </button>
+                        <button class="voice-btn stop-btn" id="stopSpeech" title="Stop Speaking" style="display: none;">
+                            <span class="voice-icon">⏹</span>
+                            <span class="voice-label">STOP</span>
+                        </button>
+                    </div>
+                    
+                    <div class="mascot-frame">
+                        <div class="frame-corner top-left"></div>
+                        <div class="frame-corner top-right"></div>
+                        <div class="frame-corner bottom-left"></div>
+                        <div class="frame-corner bottom-right"></div>
+                        
+                        <!-- Mascot Placeholder - Ready for 3D model or video -->
+                        <div class="mascot-placeholder" id="mascotArea">
+                            <!-- Cute Robot Avatar -->
+                            <div class="robot-avatar">
+                                <div class="robot-head">
+                                    <div class="robot-antenna"></div>
+                                    <div class="robot-ear left-ear"></div>
+                                    <div class="robot-ear right-ear"></div>
+                                    <div class="robot-face-screen">
+                                        <div class="robot-eyes">
+                                            <div class="robot-eye left" id="leftEye">
+                                                <div class="eye-glow"></div>
+                                            </div>
+                                            <div class="robot-eye right" id="rightEye">
+                                                <div class="eye-glow"></div>
+                                            </div>
+                                        </div>
+                                        <div class="robot-mouth" id="avatarMouth"></div>
+                                    </div>
+                                </div>
+                                <div class="robot-body-hint"></div>
+                            </div>
+                            
+                            <!-- Status Text -->
+                            <div class="mascot-status" id="mascotStatus">
+                                <span class="status-text">AWAITING INPUT</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Audio Visualizer -->
+                        <div class="audio-visualizer" id="audioVisualizer">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message system">
+                        <div class="message-content">
+                            <p><span class="highlight">Dalimms ChatBot</span> initialized. Enter any topic to receive an intelligent summary.</p>
+                        </div>
+                        <span class="message-time">System</span>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <div class="input-glow"></div>
+                        <input 
+                            type="text" 
+                            id="userInput" 
+                            placeholder="Enter a topic to explore..."
+                            autocomplete="off"
+                        >
+                        <button class="send-btn" id="sendBtn">
+                            <span class="btn-icon">▶</span>
+                            <span class="btn-text">QUERY</span>
+                        </button>
+                    </div>
+                    <div class="input-hints">
+                        <span>Try: "Artificial Intelligence" • "Quantum Computing" • "Mars Exploration"</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel - Summary Display -->
+            <aside class="right-panel">
+                <div class="panel-section summary-section">
+                    <h3 class="section-title">
+                        <span class="icon">◆</span> SUMMARY OUTPUT
+                    </h3>
+                    <div class="summary-display" id="summaryDisplay">
+                        <div class="summary-placeholder">
+                            <div class="placeholder-icon">📡</div>
+                            <p>Summary will appear here after querying a topic...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <span class="icon">◆</span> RELATED TOPICS
+                    </h3>
+                    <div class="related-topics" id="relatedTopics">
+                        <div class="topic-tag">Waiting for query...</div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3 class="section-title">
+                        <span class="icon">◆</span> SOURCE INFO
+                    </h3>
+                    <div class="source-info" id="sourceInfo">
+                        <div class="info-item">
+                            <span class="info-label">Source:</span>
+                            <span class="info-value">Knowledge Base</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Article:</span>
+                            <span class="info-value" id="articleTitle">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Link:</span>
+                            <a href="#" class="info-link" id="articleLink" target="_blank">View Full Article</a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-left">
+                <span class="version">v2.5.0</span>
+                <span class="separator">|</span>
+                <span>DALIMMS CHATBOT CORE</span>
+                <span class="separator">|</span>
+                <span class="author">By Turab Haider</span>
+            </div>
+            <div class="footer-center">
+                <div class="loading-bar" id="loadingBar">
+                    <div class="loading-progress"></div>
+                </div>
+            </div>
+            <div class="footer-right">
+                <span id="currentDate"></span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
