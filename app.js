@@ -146,13 +146,13 @@ class DalimmsChatBot {
                 // Generate summary
                 const summary = this.summarizeContent(result.content);
                 
-                // Add bot response with typing animation
-                await this.addMessageWithAnimation(summary, 'bot');
-                
-                // Start voice narration AFTER text is displayed
+                // Start voice narration WHILE text is being displayed
                 if (this.voiceEnabled && summary) {
                     this.speak(summary);
                 }
+                
+                // Add bot response with typing animation
+                await this.addMessageWithAnimation(summary, 'bot');
                 
                 // Update displays
                 this.updateSummaryPanel(summary, result.title, result.url);
