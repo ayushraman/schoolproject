@@ -893,6 +893,86 @@ html, body {
     box-shadow: var(--glow-primary);
 }
 
+/* Microphone Button */
+.mic-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid var(--holo-accent);
+    background: rgba(255, 107, 157, 0.1);
+    color: var(--holo-accent);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.mic-btn:hover {
+    background: rgba(255, 107, 157, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
+}
+
+.mic-btn.listening {
+    background: var(--holo-accent);
+    animation: mic-pulse 1s ease-in-out infinite;
+}
+
+.mic-btn.listening .mic-icon {
+    filter: brightness(0) invert(1);
+}
+
+.mic-icon {
+    font-size: 1.2rem;
+    z-index: 2;
+}
+
+.mic-waves {
+    position: absolute;
+    inset: -8px;
+    display: none;
+}
+
+.mic-btn.listening .mic-waves {
+    display: block;
+}
+
+.mic-waves .wave {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--holo-accent);
+    border-radius: 50%;
+    animation: mic-wave 1.5s ease-out infinite;
+    opacity: 0;
+}
+
+.mic-waves .wave:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.mic-waves .wave:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes mic-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes mic-wave {
+    0% { 
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    100% { 
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
 .btn-icon {
     font-size: 0.7rem;
 }
