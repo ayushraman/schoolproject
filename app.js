@@ -41,6 +41,11 @@ class DalimmsChatBot {
         this.voiceRate = 1.0;
         this.voicePitch = 1.0;
         
+        // Voice Input (Speech Recognition)
+        this.recognition = null;
+        this.isListening = false;
+        this.micBtn = document.getElementById('micBtn');
+        
         // Gesture support
         this.touchStartX = 0;
         this.touchStartY = 0;
@@ -58,6 +63,7 @@ class DalimmsChatBot {
         this.updateClock();
         this.createParticles();
         this.initVoice();
+        this.initVoiceInput();
         this.initGestures();
     }
     
@@ -797,11 +803,153 @@ class DalimmsChatBot {
     setVoicePitch(pitch) {
         this.voicePitch = Math.max(0.5, Math.min(2, pitch));
     }
-    
+
+    // ========================================
+    // Voice Input (Speech Recognition)
+    // ========================================
+
+    initVoiceInput() {
+        // Check for browser support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            console.warn('Speech Recognition not supported in this browser');
+            if (this.micBtn) {
+                this.micBtn.style.display = 'none';
+            }
+            return;
+        }
+
+        // Initialize recognition
+        this.recognition = new SpeechRecognition();
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.lang = 'en-US';
+
+        // Handle results
+        this.recognition.onresult = (event) => {
+            let finalTranscript = '';
+            let interimTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            // Update input field with transcript
+            if (this.userInput) {
+                if (finalTranscript) {
+                    this.userInput.value = finalTranscript;
+                    this.setMascotStatus('PROCESSING VOICE...');
+                } else if (interimTranscript) {
+                    this.userInput.value = interimTranscript;
+                    this.userInput.placeholder = 'Listening...';
+                }
+            }
+        };
+
+        // Handle end of speech
+        this.recognition.onend = () => {
+            this.isListening = false;
+            if (this.micBtn) {
+                this.micBtn.classList.remove('listening');
+            }
+            this.setMascotStatus('AWAITING INPUT');
+            
+            // Reset placeholder
+            if (this.userInput) {
+                this.userInput.placeholder = 'Ask me anything about any topic...';
+            }
+
+            // Auto-send if we have text
+            if (this.userInput && this.userInput.value.trim()) {
+                setTimeout(() => this.handleQuery(), 300);
+            }
+        };
+
+        // Handle errors
+        this.recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            this.isListening = false;
+            if (this.micBtn) {
+                this.micBtn.classList.remove('listening');
+            }
+            
+            let errorMsg = 'Voice input error';
+            switch (event.error) {
+                case 'not-allowed':
+                    errorMsg = 'Microphone access denied';
+                    break;
+                case 'no-speech':
+                    errorMsg = 'No speech detected';
+                    break;
+                case 'network':
+                    errorMsg = 'Network error';
+                    break;
+            }
+            this.setMascotStatus(errorMsg.toUpperCase());
+            
+            setTimeout(() => {
+                this.setMascotStatus('AWAITING INPUT');
+            }, 2000);
+        };
+
+        // Setup mic button click handler
+        if (this.micBtn) {
+            this.micBtn.addEventListener('click', () => this.toggleVoiceInput());
+        }
+
+        console.log('Voice input initialized successfully');
+    }
+
+    toggleVoiceInput() {
+        if (!this.recognition) {
+            console.warn('Speech recognition not available');
+            return;
+        }
+
+        if (this.isListening) {
+            // Stop listening
+            this.recognition.stop();
+            this.isListening = false;
+            if (this.micBtn) {
+                this.micBtn.classList.remove('listening');
+            }
+            this.setMascotStatus('AWAITING INPUT');
+        } else {
+            // Start listening
+            try {
+                // Stop any ongoing speech first
+                if (this.synth && this.isSpeaking) {
+                    this.synth.cancel();
+                }
+                
+                this.recognition.start();
+                this.isListening = true;
+                if (this.micBtn) {
+                    this.micBtn.classList.add('listening');
+                }
+                this.setMascotStatus('LISTENING...');
+                
+                // Clear input field
+                if (this.userInput) {
+                    this.userInput.value = '';
+                    this.userInput.placeholder = 'Speak now...';
+                }
+            } catch (error) {
+                console.error('Error starting speech recognition:', error);
+            }
+        }
+    }
+
     // ========================================
     // Gesture Support
     // ========================================
-    
+
     initGestures() {
         const chatSection = document.querySelector('.chat-section');
         const mascotFrame = document.querySelector('.mascot-frame');
