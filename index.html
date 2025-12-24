@@ -11,15 +11,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="holo-vignette"></div>
+    <div class="rgb-split"></div>
+    <div class="holo-overlay"></div>
+    <div class="vcr-filter"></div>
+    <div class="vcr-tracking"></div>
+    <div class="glitch-bar"></div>
+    
     <div class="dashboard-container">
-        <!-- Animated Background -->
         <div class="bg-animation">
             <div class="grid-lines"></div>
             <div class="particles" id="particles"></div>
             <div class="scan-line"></div>
         </div>
 
-        <!-- Header -->
         <header class="dashboard-header">
             <div class="logo-section">
                 <div class="logo-icon">
@@ -44,9 +49,7 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="dashboard-main">
-            <!-- Left Panel - Stats -->
             <aside class="left-panel">
                 <div class="panel-section">
                     <h3 class="section-title">
@@ -118,11 +121,8 @@
                 </div>
             </aside>
 
-            <!-- Center - Chat Area -->
             <section class="chat-section">
-                <!-- Mascot Container -->
                 <div class="mascot-container">
-                    <!-- Voice Controls - Separate Row -->
                     <div class="voice-controls">
                         <button class="voice-btn active" id="voiceToggle" title="Toggle Voice Narration">
                             <span class="voice-icon">🔊</span>
@@ -140,9 +140,7 @@
                         <div class="frame-corner bottom-left"></div>
                         <div class="frame-corner bottom-right"></div>
                         
-                        <!-- Mascot Placeholder - Ready for 3D model or video -->
                         <div class="mascot-placeholder" id="mascotArea">
-                            <!-- Cute Robot Avatar -->
                             <div class="robot-avatar">
                                 <div class="robot-head">
                                     <div class="robot-antenna"></div>
@@ -163,13 +161,11 @@
                                 <div class="robot-body-hint"></div>
                             </div>
                             
-                            <!-- Status Text -->
                             <div class="mascot-status" id="mascotStatus">
                                 <span class="status-text">AWAITING INPUT</span>
                             </div>
                         </div>
                         
-                        <!-- Audio Visualizer -->
                         <div class="audio-visualizer" id="audioVisualizer">
                             <div class="bar"></div>
                             <div class="bar"></div>
@@ -183,7 +179,6 @@
                     </div>
                 </div>
 
-                <!-- Chat Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="message system">
                         <div class="message-content">
@@ -193,16 +188,10 @@
                     </div>
                 </div>
 
-                <!-- Input Area -->
                 <div class="input-container">
                     <div class="input-wrapper">
                         <div class="input-glow"></div>
-                        <input 
-                            type="text" 
-                            id="userInput" 
-                            placeholder="Enter a topic to explore..."
-                            autocomplete="off"
-                        >
+                        <input type="text" id="userInput" placeholder="Enter a topic to explore..." autocomplete="off">
                         <button class="mic-btn" id="micBtn" title="Voice Input">
                             <span class="mic-icon">🎙️</span>
                             <span class="mic-waves">
@@ -222,7 +211,6 @@
                 </div>
             </section>
 
-            <!-- Right Panel - Summary Display -->
             <aside class="right-panel">
                 <div class="panel-section summary-section">
                     <h3 class="section-title">
@@ -267,7 +255,6 @@
             </aside>
         </main>
 
-        <!-- Footer -->
         <footer class="dashboard-footer">
             <div class="footer-left">
                 <span class="version">v2.5.0</span>
