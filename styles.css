@@ -1,43 +1,26 @@
-/* ========================================
-   Dalimms ChatBot - Holographic Immersive UI
-   Fresh & Modern Design with Cute Avatar
-   ======================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-    /* Holographic Color Palette */
     --holo-primary: #00d4ff;
     --holo-secondary: #7b68ee;
     --holo-accent: #ff6b9d;
     --holo-mint: #4ade80;
     --holo-gold: #fbbf24;
-    
-    /* Glass Colors */
     --glass-bg: rgba(255, 255, 255, 0.08);
     --glass-border: rgba(255, 255, 255, 0.15);
     --glass-highlight: rgba(255, 255, 255, 0.25);
-    
-    /* Base Colors */
     --bg-deep: #0c0c1d;
     --bg-card: rgba(20, 20, 45, 0.7);
     --bg-elevated: rgba(30, 30, 60, 0.6);
-    
-    /* Text Colors */
     --text-white: #ffffff;
     --text-light: #e0e0f0;
     --text-muted: #8888aa;
-    
-    /* Fonts */
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Poppins', sans-serif;
-    
-    /* Shadows */
     --glow-primary: 0 0 30px rgba(0, 212, 255, 0.4);
     --glow-accent: 0 0 30px rgba(255, 107, 157, 0.4);
 }
 
-/* === RESET === */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -52,7 +35,6 @@ html, body {
     overflow: hidden;
 }
 
-/* === MAIN CONTAINER === */
 .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -65,7 +47,6 @@ html, body {
         var(--bg-deep);
 }
 
-/* Animated Background */
 .bg-animation {
     position: fixed;
     inset: 0;
@@ -95,7 +76,181 @@ html, body {
     to { transform: rotate(360deg); }
 }
 
-/* === HEADER === */
+.vcr-filter {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.vcr-filter::before {
+    content: '';
+    position: absolute;
+    inset: -200%;
+    width: 400%;
+    height: 400%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    animation: vcr-noise 0.15s steps(8) infinite;
+}
+
+.vcr-filter::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.12) 0px,
+        rgba(0, 0, 0, 0.12) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    opacity: 0.5;
+}
+
+.holo-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    background: 
+        linear-gradient(
+            180deg,
+            rgba(255, 0, 100, 0.025) 0%,
+            transparent 15%,
+            rgba(0, 255, 255, 0.035) 35%,
+            transparent 50%,
+            rgba(255, 0, 255, 0.025) 70%,
+            transparent 85%,
+            rgba(0, 255, 200, 0.02) 100%
+        );
+    animation: holo-wave 4s ease-in-out infinite;
+}
+
+.rgb-split {
+    position: fixed;
+    inset: 0;
+    z-index: 9997;
+    pointer-events: none;
+}
+
+.rgb-split::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 0, 50, 0.025) 0%,
+        transparent 15%,
+        transparent 85%,
+        rgba(0, 100, 255, 0.025) 100%
+    );
+}
+
+.vcr-tracking {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 10000;
+    pointer-events: none;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.15) 30%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0.15) 70%,
+        transparent 100%
+    );
+    box-shadow: 
+        0 0 15px rgba(255, 255, 255, 0.15),
+        0 -1px 8px rgba(0, 255, 255, 0.15),
+        0 1px 8px rgba(255, 0, 255, 0.15);
+    animation: vcr-track 7s linear infinite;
+}
+
+.holo-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 9996;
+    pointer-events: none;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 40%,
+        rgba(0, 10, 30, 0.4) 100%
+    );
+}
+
+.glitch-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 0;
+    z-index: 10001;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.12);
+    animation: glitch-bar 5s ease-in-out infinite;
+}
+
+@keyframes vcr-noise {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-1%, -1%); }
+    40% { transform: translate(1%, 1%); }
+    60% { transform: translate(-1%, 0.5%); }
+    80% { transform: translate(0.5%, -0.5%); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes holo-wave {
+    0%, 100% { 
+        opacity: 0.9;
+        transform: translateY(0);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes vcr-track {
+    0% { top: -5px; opacity: 0; }
+    3% { opacity: 0.8; }
+    97% { opacity: 0.8; }
+    100% { top: 100vh; opacity: 0; }
+}
+
+@keyframes glitch-bar {
+    0%, 85%, 100% { 
+        height: 0;
+        top: 0;
+        opacity: 0;
+    }
+    86% {
+        height: 2px;
+        top: 20%;
+        opacity: 1;
+    }
+    88% {
+        height: 0;
+        opacity: 0;
+    }
+    89% {
+        height: 4px;
+        top: 55%;
+        opacity: 1;
+    }
+    91% {
+        height: 1px;
+        top: 40%;
+        opacity: 0.7;
+    }
+    93% {
+        height: 0;
+        opacity: 0;
+    }
+}
+
 .dashboard-header {
     display: flex;
     align-items: center;
@@ -167,7 +322,6 @@ html, body {
     50% { transform: scale(1.4); opacity: 0.6; }
 }
 
-/* === MAIN CONTENT === */
 .dashboard-main {
     display: grid;
     grid-template-columns: 280px 1fr 280px;
@@ -179,7 +333,6 @@ html, body {
     z-index: 10;
 }
 
-/* === GLASS PANELS === */
 .left-panel, .right-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -221,7 +374,6 @@ html, body {
     font-size: 0.6rem;
 }
 
-/* Metrics */
 .metric-item {
     display: flex;
     justify-content: space-between;
@@ -246,7 +398,6 @@ html, body {
     font-size: 0.95rem;
 }
 
-/* Topics */
 .topic-list {
     list-style: none;
 }
@@ -281,7 +432,6 @@ html, body {
     border-left-color: transparent;
 }
 
-/* Activity Graph Visualization */
 .activity-graph {
     height: 100px;
     width: 100%;
@@ -379,7 +529,6 @@ html, body {
     pointer-events: none;
 }
 
-/* === CHAT SECTION === */
 .chat-section {
     display: flex;
     flex-direction: column;
@@ -391,7 +540,6 @@ html, body {
     min-height: 0;
 }
 
-/* === CUTE ROBOT AVATAR === */
 .mascot-container {
     height: 260px;
     flex-shrink: 0;
@@ -399,14 +547,12 @@ html, body {
     flex-direction: column;
     align-items: center;
     padding: 12px 20px 15px 20px;
-    background: 
-        radial-gradient(ellipse at center, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+    background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
     border-bottom: 1px solid var(--glass-border);
     position: relative;
     overflow: hidden;
 }
 
-/* Holographic Ring Effect */
 .mascot-container::before {
     content: '';
     position: absolute;
@@ -450,12 +596,10 @@ html, body {
     justify-content: center;
 }
 
-/* Frame Corners - Hidden */
 .frame-corner {
     display: none;
 }
 
-/* Cute Robot Avatar */
 .robot-avatar {
     display: flex;
     flex-direction: column;
@@ -480,9 +624,7 @@ html, body {
     justify-content: center;
     align-items: center;
     border: 3px solid var(--holo-primary);
-    box-shadow: 
-        0 0 15px rgba(0, 212, 255, 0.3),
-        inset 0 -8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3), inset 0 -8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .robot-antenna {
@@ -549,7 +691,6 @@ html, body {
     position: relative;
 }
 
-/* Screen Glow */
 .robot-face-screen::before {
     content: '';
     position: absolute;
@@ -597,7 +738,6 @@ html, body {
     50% { transform: scaleY(0.1); }
 }
 
-/* Cute Smile */
 .robot-mouth {
     width: 22px;
     height: 10px;
@@ -609,7 +749,6 @@ html, body {
     z-index: 1;
 }
 
-/* Cheek Blush - on face screen */
 .robot-face-screen::after {
     content: '';
     position: absolute;
@@ -674,7 +813,6 @@ html, body {
     display: inline-block;
 }
 
-/* Voice Controls */
 .voice-controls {
     display: flex;
     flex-direction: row;
@@ -720,7 +858,6 @@ html, body {
     box-shadow: var(--glow-accent);
 }
 
-/* Audio Visualizer */
 .audio-visualizer {
     position: absolute;
     bottom: 28px;
@@ -764,7 +901,6 @@ html, body {
     100% { height: 22px; }
 }
 
-/* === CHAT MESSAGES === */
 .chat-messages {
     flex: 1;
     overflow-y: auto;
@@ -830,7 +966,6 @@ html, body {
     text-align: right;
 }
 
-/* === INPUT AREA === */
 .input-container {
     padding: 20px;
     background: var(--bg-elevated);
@@ -893,7 +1028,6 @@ html, body {
     box-shadow: var(--glow-primary);
 }
 
-/* Microphone Button */
 .mic-btn {
     width: 46px;
     height: 46px;
@@ -984,7 +1118,6 @@ html, body {
     margin-top: 12px;
 }
 
-/* === RIGHT PANEL SPECIFICS === */
 .summary-display {
     min-height: 100px;
     color: var(--text-light);
@@ -1056,7 +1189,6 @@ html, body {
     color: var(--holo-accent);
 }
 
-/* === FOOTER === */
 .dashboard-footer {
     display: flex;
     align-items: center;
@@ -1107,7 +1239,6 @@ html, body {
     transition: width 0.3s ease;
 }
 
-/* === SCROLLBAR === */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -1125,7 +1256,6 @@ html, body {
     background: var(--holo-primary);
 }
 
-/* === RESPONSIVE === */
 @media (max-width: 1200px) {
     .dashboard-main {
         grid-template-columns: 240px 1fr 240px;
