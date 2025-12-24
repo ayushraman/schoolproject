@@ -1,11 +1,5 @@
-// ========================================
-// Dalimms ChatBot - AI Knowledge Assistant
-// Author: Turab Haider
-// ========================================
-
 class DalimmsChatBot {
     constructor() {
-        // DOM Elements
         this.chatMessages = document.getElementById('chatMessages');
         this.userInput = document.getElementById('userInput');
         this.sendBtn = document.getElementById('sendBtn');
@@ -20,19 +14,16 @@ class DalimmsChatBot {
         this.articleLink = document.getElementById('articleLink');
         this.neuralCanvas = document.getElementById('neuralCanvas');
         
-        // Metrics Elements
         this.queriesCount = document.getElementById('queriesCount');
         this.wordsCount = document.getElementById('wordsCount');
         this.responseTime = document.getElementById('responseTime');
         this.dataStream = document.getElementById('dataStream');
         
-        // State
         this.isProcessing = false;
         this.queryHistory = [];
         this.totalQueries = 0;
         this.totalWords = 0;
         
-        // Voice Narration
         this.synth = window.speechSynthesis;
         this.currentUtterance = null;
         this.isSpeaking = false;
@@ -41,18 +32,15 @@ class DalimmsChatBot {
         this.voiceRate = 1.0;
         this.voicePitch = 1.0;
         
-        // Voice Input (Speech Recognition)
         this.recognition = null;
         this.isListening = false;
         this.micBtn = document.getElementById('micBtn');
         
-        // Gesture support
         this.touchStartX = 0;
         this.touchStartY = 0;
         this.touchEndX = 0;
         this.touchEndY = 0;
         
-        // Initialize
         this.init();
     }
     
@@ -68,14 +56,10 @@ class DalimmsChatBot {
     }
     
     setupEventListeners() {
-        // Send button click
         if (this.sendBtn) {
             this.sendBtn.addEventListener('click', () => this.handleQuery());
-        } else {
-            console.warn('Send button not found');
         }
         
-        // Enter key press
         if (this.userInput) {
             this.userInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -84,7 +68,6 @@ class DalimmsChatBot {
                 }
             });
             
-            // Input focus effects
             this.userInput.addEventListener('focus', () => {
                 this.setMascotStatus('LISTENING...');
             });
@@ -94,26 +77,18 @@ class DalimmsChatBot {
                     this.setMascotStatus('AWAITING INPUT');
                 }
             });
-        } else {
-            console.warn('User input not found');
         }
         
-        // Voice toggle button
         const voiceToggle = document.getElementById('voiceToggle');
         if (voiceToggle) {
             voiceToggle.addEventListener('click', () => this.toggleVoice());
         }
         
-        // Stop speech button
         const stopSpeechBtn = document.getElementById('stopSpeech');
         if (stopSpeechBtn) {
             stopSpeechBtn.addEventListener('click', () => this.stopVoice());
         }
     }
-    
-    // ========================================
-    // Query Handling
-    // ========================================
     
     async handleQuery() {
         if (!this.userInput) return;
@@ -126,40 +101,32 @@ class DalimmsChatBot {
         if (this.sendBtn) this.sendBtn.disabled = true;
         this.userInput.value = '';
         
-        // Add user message
         this.addMessage(query, 'user');
         
-        // Update UI states
         this.setMascotStatus('SEARCHING...');
         this.showLoading(true);
         
         const startTime = Date.now();
         
         try {
-            // Fetch Wikipedia content
             const result = await this.fetchWikipedia(query);
             
             if (result.success) {
                 this.setMascotStatus('ANALYZING...');
                 await this.sleep(500);
                 
-                // Generate summary
                 const summary = this.summarizeContent(result.content);
                 
-                // Start voice narration WHILE text is being displayed
                 if (this.voiceEnabled && summary) {
                     this.speak(summary);
                 }
                 
-                // Add bot response with typing animation
                 await this.addMessageWithAnimation(summary, 'bot');
                 
-                // Update displays
                 this.updateSummaryPanel(summary, result.title, result.url);
                 this.updateRelatedTopics(result.links);
                 this.addToHistory(result.title);
                 
-                // Update metrics
                 const responseTimeMs = Date.now() - startTime;
                 this.updateMetrics(summary, responseTimeMs);
                 
@@ -172,24 +139,17 @@ class DalimmsChatBot {
             this.addMessage('An error occurred while fetching data. Please try again.', 'bot');
         }
         
-        // Reset states
         this.showLoading(false);
         this.isProcessing = false;
         if (this.sendBtn) this.sendBtn.disabled = false;
         
-        // Only reset status if not speaking
         if (!this.isSpeaking) {
             this.stopSpeaking();
             this.setMascotStatus('AWAITING INPUT');
         }
     }
     
-    // ========================================
-    // Wikipedia API
-    // ========================================
-    
     async fetchWikipedia(query) {
-        // First, search for the article
         const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
         
         try {
@@ -202,7 +162,6 @@ class DalimmsChatBot {
             
             const pageTitle = searchData.query.search[0].title;
             
-            // Fetch the page content
             const contentUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=extracts|links&exintro=true&explaintext=true&pllimit=10&format=json&origin=*`;
             
             const contentResponse = await fetch(contentUrl);
@@ -216,7 +175,6 @@ class DalimmsChatBot {
                 return { success: false };
             }
             
-            // Get related links
             const links = page.links ? page.links.slice(0, 5).map(l => l.title) : [];
             
             return {
@@ -233,22 +191,15 @@ class DalimmsChatBot {
         }
     }
     
-    // ========================================
-    // Content Summarization
-    // ========================================
-    
     summarizeContent(content) {
-        // Clean and split into sentences
         const sentences = content
             .replace(/\n/g, ' ')
             .split(/(?<=[.!?])\s+/)
             .filter(s => s.trim().length > 20);
         
-        // Take first 3-5 sentences for summary
         const summaryLength = Math.min(5, Math.max(3, sentences.length));
         let summary = sentences.slice(0, summaryLength).join(' ');
         
-        // Ensure it doesn't end mid-sentence
         if (summary.length > 500) {
             summary = summary.substring(0, 500);
             const lastPeriod = summary.lastIndexOf('.');
@@ -259,10 +210,6 @@ class DalimmsChatBot {
         
         return summary || 'No summary available for this topic.';
     }
-    
-    // ========================================
-    // Message Handling
-    // ========================================
     
     addMessage(content, type) {
         if (!this.chatMessages) return;
@@ -307,19 +254,17 @@ class DalimmsChatBot {
         messageDiv.querySelector('.message-content').appendChild(contentP);
         this.chatMessages.appendChild(messageDiv);
         
-        // Animate text appearance
         await this.typeText(contentP, content);
         this.scrollToBottom();
     }
     
     async typeText(element, text) {
         const chars = text.split('');
-        const speed = 15; // ms per character
+        const speed = 15;
         
         for (let i = 0; i < chars.length; i++) {
             element.textContent += chars[i];
             
-            // Scroll as text appears
             if (i % 10 === 0) {
                 this.scrollToBottom();
             }
@@ -333,10 +278,6 @@ class DalimmsChatBot {
             this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
         }
     }
-    
-    // ========================================
-    // UI Updates
-    // ========================================
     
     setMascotStatus(status) {
         if (!this.mascotStatus) return;
@@ -413,7 +354,6 @@ class DalimmsChatBot {
             `<div class="topic-tag" data-topic="${link}">${link}</div>`
         ).join('');
         
-        // Add click handlers
         this.relatedTopics.querySelectorAll('.topic-tag').forEach(tag => {
             tag.addEventListener('click', () => {
                 if (this.userInput) {
@@ -436,7 +376,6 @@ class DalimmsChatBot {
             `<li class="topic-item" data-topic="${topic}">${topic}</li>`
         ).join('');
         
-        // Add click handlers
         this.topicList.querySelectorAll('.topic-item').forEach(item => {
             item.addEventListener('click', () => {
                 if (this.userInput) {
@@ -456,15 +395,9 @@ class DalimmsChatBot {
         if (this.responseTime) this.responseTime.textContent = `${responseTime}ms`;
     }
     
-    // ========================================
-    // Background Animations
-    // ========================================
-    
     startBackgroundAnimations() {
-        // Update clock every second
         setInterval(() => this.updateClock(), 1000);
         
-        // Update date
         const dateElement = document.getElementById('currentDate');
         if (dateElement) {
             dateElement.textContent = new Date().toLocaleDateString('en-US', {
@@ -503,10 +436,6 @@ class DalimmsChatBot {
         }
     }
     
-    // ========================================
-    // Neural Graph Animation
-    // ========================================
-    
     initNeuralGraph() {
         const canvas = this.neuralCanvas;
         if (!canvas) return;
@@ -514,7 +443,6 @@ class DalimmsChatBot {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         
-        // Set canvas size
         const resize = () => {
             canvas.width = canvas.offsetWidth * 2;
             canvas.height = canvas.offsetHeight * 2;
@@ -524,7 +452,6 @@ class DalimmsChatBot {
         resize();
         window.addEventListener('resize', resize);
         
-        // Neural network nodes
         const nodes = [];
         const nodeCount = 15;
         
@@ -541,17 +468,13 @@ class DalimmsChatBot {
         const animate = () => {
             ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
             
-            // Update and draw nodes
             nodes.forEach((node, i) => {
-                // Move
                 node.x += node.vx;
                 node.y += node.vy;
                 
-                // Bounce off edges
                 if (node.x < 0 || node.x > canvas.offsetWidth) node.vx *= -1;
                 if (node.y < 0 || node.y > canvas.offsetHeight) node.vy *= -1;
                 
-                // Draw connections
                 nodes.forEach((other, j) => {
                     if (i === j) return;
                     const dist = Math.hypot(node.x - other.x, node.y - other.y);
@@ -565,7 +488,6 @@ class DalimmsChatBot {
                     }
                 });
                 
-                // Draw node
                 ctx.beginPath();
                 ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
                 ctx.fillStyle = '#00f0ff';
@@ -578,28 +500,19 @@ class DalimmsChatBot {
         animate();
     }
     
-    // ========================================
-    // Voice Narration
-    // ========================================
-    
     initVoice() {
-        // Check if speech synthesis is supported
         if (!('speechSynthesis' in window)) {
-            console.warn('Speech synthesis not supported');
             this.voiceEnabled = false;
             this.updateVoiceButtonState();
             return;
         }
         
-        // Wait for voices to load
         if (this.synth.onvoiceschanged !== undefined) {
             this.synth.onvoiceschanged = () => this.loadVoices();
         }
         
-        // Try loading voices immediately
         this.loadVoices();
         
-        // Retry loading voices after a delay (some browsers load voices async)
         setTimeout(() => {
             if (!this.selectedVoice) {
                 this.loadVoices();
@@ -612,7 +525,6 @@ class DalimmsChatBot {
             }
         }, 1000);
         
-        // Update voice button state
         this.updateVoiceButtonState();
     }
     
@@ -620,13 +532,9 @@ class DalimmsChatBot {
         const voices = this.synth.getVoices();
         
         if (voices.length === 0) {
-            console.log('No voices available yet');
             return;
         }
         
-        console.log('Available voices:', voices.length);
-        
-        // Prefer futuristic-sounding voices
         const preferredVoices = [
             'Google UK English Female',
             'Google UK English Male', 
@@ -639,61 +547,46 @@ class DalimmsChatBot {
             'Daniel'
         ];
         
-        // Try to find a preferred voice
         for (const preferred of preferredVoices) {
             const voice = voices.find(v => v.name.includes(preferred));
             if (voice) {
                 this.selectedVoice = voice;
-                console.log('Selected voice:', voice.name);
                 break;
             }
         }
         
-        // Fallback to first English voice
         if (!this.selectedVoice) {
             this.selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-            console.log('Fallback voice:', this.selectedVoice?.name);
         }
     }
     
     speak(text) {
-        // Check if speech synthesis is available
         if (!this.synth) {
-            console.warn('Speech synthesis not available');
             return;
         }
         
-        // Cancel any ongoing speech
         this.synth.cancel();
         
         if (!text || !this.voiceEnabled) {
-            console.log('Speech skipped:', !text ? 'no text' : 'voice disabled');
             return;
         }
         
-        // Clean the text for better speech
         const cleanText = text
-            .replace(/\[.*?\]/g, '') // Remove wiki-style references
-            .replace(/https?:\/\/\S+/g, '') // Remove URLs
-            .replace(/\s+/g, ' ') // Normalize whitespace
+            .replace(/\[.*?\]/g, '')
+            .replace(/https?:\/\/\S+/g, '')
+            .replace(/\s+/g, ' ')
             .trim();
         
         if (!cleanText) {
-            console.log('No text to speak after cleaning');
             return;
         }
         
-        console.log('Starting speech synthesis, text length:', cleanText.length);
-        
-        // Try to load voices if not already loaded
         if (!this.selectedVoice) {
             this.loadVoices();
         }
         
-        // Create utterance
         this.currentUtterance = new SpeechSynthesisUtterance(cleanText);
         
-        // Configure voice settings
         if (this.selectedVoice) {
             this.currentUtterance.voice = this.selectedVoice;
         }
@@ -701,9 +594,7 @@ class DalimmsChatBot {
         this.currentUtterance.pitch = this.voicePitch;
         this.currentUtterance.volume = 1.0;
         
-        // Event handlers
         this.currentUtterance.onstart = () => {
-            console.log('Speech started');
             this.isSpeaking = true;
             this.startSpeaking();
             this.setMascotStatus('SPEAKING...');
@@ -711,7 +602,6 @@ class DalimmsChatBot {
         };
         
         this.currentUtterance.onend = () => {
-            console.log('Speech ended');
             this.isSpeaking = false;
             this.stopSpeaking();
             if (!this.isProcessing) {
@@ -721,30 +611,24 @@ class DalimmsChatBot {
         };
         
         this.currentUtterance.onerror = (event) => {
-            console.error('Speech synthesis error:', event.error);
             this.isSpeaking = false;
             this.stopSpeaking();
             this.setMascotStatus('AWAITING INPUT');
             this.updateVoiceButtonState();
         };
         
-        // Workaround for Chrome bug where speech stops after ~15 seconds
         this.currentUtterance.onpause = () => {
             if (this.isSpeaking) {
                 this.synth.resume();
             }
         };
         
-        // Start speaking
         this.synth.speak(this.currentUtterance);
         
-        // Chrome workaround: keep speech alive
         this.keepSpeechAlive();
     }
     
     keepSpeechAlive() {
-        // Chrome has a bug where speech synthesis stops after ~15 seconds
-        // This workaround pauses and resumes to keep it going
         if (this.isSpeaking && this.synth.speaking) {
             this.synth.pause();
             this.synth.resume();
@@ -769,7 +653,6 @@ class DalimmsChatBot {
         
         this.updateVoiceButtonState();
         
-        // Show feedback
         const status = this.voiceEnabled ? 'VOICE ENABLED' : 'VOICE DISABLED';
         this.setMascotStatus(status);
         setTimeout(() => {
@@ -804,29 +687,21 @@ class DalimmsChatBot {
         this.voicePitch = Math.max(0.5, Math.min(2, pitch));
     }
 
-    // ========================================
-    // Voice Input (Speech Recognition)
-    // ========================================
-
     initVoiceInput() {
-        // Check for browser support
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
         if (!SpeechRecognition) {
-            console.warn('Speech Recognition not supported in this browser');
             if (this.micBtn) {
                 this.micBtn.style.display = 'none';
             }
             return;
         }
 
-        // Initialize recognition
         this.recognition = new SpeechRecognition();
         this.recognition.continuous = false;
         this.recognition.interimResults = true;
         this.recognition.lang = 'en-US';
 
-        // Handle results
         this.recognition.onresult = (event) => {
             let finalTranscript = '';
             let interimTranscript = '';
@@ -840,7 +715,6 @@ class DalimmsChatBot {
                 }
             }
 
-            // Update input field with transcript
             if (this.userInput) {
                 if (finalTranscript) {
                     this.userInput.value = finalTranscript;
@@ -852,7 +726,6 @@ class DalimmsChatBot {
             }
         };
 
-        // Handle end of speech
         this.recognition.onend = () => {
             this.isListening = false;
             if (this.micBtn) {
@@ -860,20 +733,16 @@ class DalimmsChatBot {
             }
             this.setMascotStatus('AWAITING INPUT');
             
-            // Reset placeholder
             if (this.userInput) {
                 this.userInput.placeholder = 'Ask me anything about any topic...';
             }
 
-            // Auto-send if we have text
             if (this.userInput && this.userInput.value.trim()) {
                 setTimeout(() => this.handleQuery(), 300);
             }
         };
 
-        // Handle errors
         this.recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
             this.isListening = false;
             if (this.micBtn) {
                 this.micBtn.classList.remove('listening');
@@ -898,22 +767,17 @@ class DalimmsChatBot {
             }, 2000);
         };
 
-        // Setup mic button click handler
         if (this.micBtn) {
             this.micBtn.addEventListener('click', () => this.toggleVoiceInput());
         }
-
-        console.log('Voice input initialized successfully');
     }
 
     toggleVoiceInput() {
         if (!this.recognition) {
-            console.warn('Speech recognition not available');
             return;
         }
 
         if (this.isListening) {
-            // Stop listening
             this.recognition.stop();
             this.isListening = false;
             if (this.micBtn) {
@@ -921,9 +785,7 @@ class DalimmsChatBot {
             }
             this.setMascotStatus('AWAITING INPUT');
         } else {
-            // Start listening
             try {
-                // Stop any ongoing speech first
                 if (this.synth && this.isSpeaking) {
                     this.synth.cancel();
                 }
@@ -935,7 +797,6 @@ class DalimmsChatBot {
                 }
                 this.setMascotStatus('LISTENING...');
                 
-                // Clear input field
                 if (this.userInput) {
                     this.userInput.value = '';
                     this.userInput.placeholder = 'Speak now...';
@@ -946,17 +807,12 @@ class DalimmsChatBot {
         }
     }
 
-    // ========================================
-    // Gesture Support
-    // ========================================
-
     initGestures() {
         const chatSection = document.querySelector('.chat-section');
         const mascotFrame = document.querySelector('.mascot-frame');
         
         if (!chatSection) return;
         
-        // Touch events for swipe gestures
         chatSection.addEventListener('touchstart', (e) => {
             this.touchStartX = e.changedTouches[0].screenX;
             this.touchStartY = e.changedTouches[0].screenY;
@@ -968,7 +824,6 @@ class DalimmsChatBot {
             this.handleGesture();
         }, { passive: true });
         
-        // Double tap on mascot to toggle voice
         if (mascotFrame) {
             let lastTap = 0;
             mascotFrame.addEventListener('touchend', (e) => {
@@ -982,14 +837,12 @@ class DalimmsChatBot {
                 lastTap = currentTime;
             });
             
-            // Double click for desktop
             mascotFrame.addEventListener('dblclick', () => {
                 this.toggleVoice();
                 this.showGestureFeedback('Voice ' + (this.voiceEnabled ? 'ON' : 'OFF'));
             });
         }
         
-        // Long press on mascot to stop speaking
         if (mascotFrame) {
             let pressTimer;
             mascotFrame.addEventListener('touchstart', () => {
@@ -1016,27 +869,21 @@ class DalimmsChatBot {
         const deltaY = this.touchEndY - this.touchStartY;
         const minSwipeDistance = 50;
         
-        // Horizontal swipe detection
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
             if (deltaX > 0) {
-                // Swipe right - could be used for navigation
                 this.onSwipeRight();
             } else {
-                // Swipe left - could be used for navigation
                 this.onSwipeLeft();
             }
         }
         
-        // Vertical swipe detection
         if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > minSwipeDistance) {
             if (deltaY > 0) {
-                // Swipe down - stop speech
                 if (this.isSpeaking) {
                     this.stopVoice();
                     this.showGestureFeedback('Speech Stopped');
                 }
             } else {
-                // Swipe up - focus input
                 this.userInput.focus();
                 this.showGestureFeedback('Ready to type');
             }
@@ -1044,14 +891,12 @@ class DalimmsChatBot {
     }
     
     onSwipeRight() {
-        // Toggle voice on swipe right
         if (!this.isProcessing) {
             this.toggleVoice();
         }
     }
     
     onSwipeLeft() {
-        // Clear chat or go back (placeholder for future functionality)
         if (this.isSpeaking) {
             this.stopVoice();
             this.showGestureFeedback('Speech Stopped');
@@ -1059,7 +904,6 @@ class DalimmsChatBot {
     }
     
     showGestureFeedback(message) {
-        // Create feedback element
         let feedback = document.getElementById('gestureFeedback');
         if (!feedback) {
             feedback = document.createElement('div');
@@ -1076,16 +920,11 @@ class DalimmsChatBot {
         }, 1500);
     }
     
-    // ========================================
-    // Utilities
-    // ========================================
-    
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     window.dalimmsChatBot = new DalimmsChatBot();
 });
