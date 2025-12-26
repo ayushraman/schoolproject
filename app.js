@@ -45,6 +45,7 @@ class DalimmsChatBot {
     }
     
     init() {
+        this.showSplashScreen();
         this.setupEventListeners();
         this.startBackgroundAnimations();
         this.initNeuralGraph();
@@ -53,6 +54,37 @@ class DalimmsChatBot {
         this.initVoice();
         this.initVoiceInput();
         this.initGestures();
+    }
+
+    showSplashScreen() {
+        const splash = document.getElementById('splashScreen');
+        if (!splash) return;
+
+        const statusMessages = [
+            'INITIALIZING NEURAL NETWORK...',
+            'LOADING KNOWLEDGE BASE...',
+            'CONNECTING TO WIKIPEDIA API...',
+            'CALIBRATING VOICE MODULES...',
+            'SYSTEM READY'
+        ];
+
+        let messageIndex = 0;
+        const statusElement = splash.querySelector('.splash-status');
+
+        const messageInterval = setInterval(() => {
+            if (messageIndex < statusMessages.length && statusElement) {
+                statusElement.textContent = statusMessages[messageIndex];
+                messageIndex++;
+            }
+        }, 600);
+
+        setTimeout(() => {
+            clearInterval(messageInterval);
+            splash.classList.add('hidden');
+            setTimeout(() => {
+                splash.remove();
+            }, 800);
+        }, 3500);
     }
     
     setupEventListeners() {
@@ -226,7 +258,7 @@ class DalimmsChatBot {
             <div class="message-content">
                 <p>${content}</p>
             </div>
-            <span class="message-time">${type === 'user' ? 'You' : 'SP'} • ${time}</span>
+            <span class="message-time">${type === 'user' ? 'You' : 'DSGS'} • ${time}</span>
         `;
         
         this.chatMessages.appendChild(messageDiv);
@@ -248,7 +280,7 @@ class DalimmsChatBot {
         
         messageDiv.innerHTML = `
             <div class="message-content"></div>
-            <span class="message-time">SP • ${time}</span>
+            <span class="message-time">DSGS • ${time}</span>
         `;
         
         messageDiv.querySelector('.message-content').appendChild(contentP);
