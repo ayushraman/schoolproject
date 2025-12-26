@@ -6,11 +6,30 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dalimms ChatBot - AI Knowledge Assistant</title>
+    <title>DSGS ChatBot - AI Knowledge Assistant</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-logos">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Coat_of_Arms_of_the_University_of_Cambridge.svg" alt="Cambridge" class="splash-logo cambridge">
+                <img src="DSGS.png" alt="DSGS" class="splash-logo dsgs">
+            </div>
+            <div class="splash-title">
+                <span class="splash-text" data-text="DSGS">DSGS</span>
+                <span class="splash-accent" data-text="ChatBot">ChatBot</span>
+            </div>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+            <div class="splash-status">INITIALIZING NEURAL NETWORK...</div>
+        </div>
+        <div class="splash-particles"></div>
+        <div class="splash-grid"></div>
+    </div>
+
     <div class="holo-vignette"></div>
     <div class="rgb-split"></div>
     <div class="holo-overlay"></div>
@@ -26,13 +45,14 @@
         </div>
 
         <header class="dashboard-header">
-            <div class="logo-section">
-                <div class="logo-icon">
+            <div class="header-left">
+                <div class="logo-icons">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Coat_of_Arms_of_the_University_of_Cambridge.svg" alt="Cambridge Logo" class="cambridge-logo">
+                    <img src="DSGS.png" alt="DSGS Logo" class="dsgs-logo">
                 </div>
-                <div class="logo-text">
-                    <h1>Dalimms<span class="accent">ChatBot</span></h1>
-                </div>
+            </div>
+            <div class="header-center">
+                <h1>DSGS<span class="accent">ChatBot</span></h1>
             </div>
             <div class="status-indicators">
                 <div class="status-item online">
