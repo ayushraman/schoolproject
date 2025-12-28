@@ -1,4 +1,4 @@
-class DalimmsChatBot {
+class DalimssChatBot {
     constructor() {
         this.chatMessages = document.getElementById('chatMessages');
         this.userInput = document.getElementById('userInput');
@@ -258,7 +258,7 @@ class DalimmsChatBot {
             <div class="message-content">
                 <p>${content}</p>
             </div>
-            <span class="message-time">${type === 'user' ? 'You' : 'DSGS'} • ${time}</span>
+            <span class="message-time">${type === 'user' ? 'You' : 'Dalimss'} • ${time}</span>
         `;
         
         this.chatMessages.appendChild(messageDiv);
@@ -280,7 +280,7 @@ class DalimmsChatBot {
         
         messageDiv.innerHTML = `
             <div class="message-content"></div>
-            <span class="message-time">DSGS • ${time}</span>
+            <span class="message-time">Dalimss • ${time}</span>
         `;
         
         messageDiv.querySelector('.message-content').appendChild(contentP);
@@ -958,5 +958,5 @@ class DalimmsChatBot {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.dalimmsChatBot = new DalimmsChatBot();
+    window.dalimssChatBot = new DalimssChatBot();
 });
