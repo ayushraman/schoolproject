@@ -128,7 +128,7 @@ html, body {
     animation: logoPulse 2s ease-in-out infinite;
 }
 
-.splash-logo.dsgs {
+.splash-logo.dalimss {
     height: 100px;
     animation: logoPulse 2s ease-in-out infinite 0.5s;
     border-radius: 10px;
@@ -566,13 +566,13 @@ html, body {
     filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
 }
 
-.dsgs-logo {
+.dalimss-logo {
     height: 60px;
     width: auto;
     filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
 }
 
-.dsgs-logo {
+.dalimss-logo {
     border-radius: 8px;
 }
 
